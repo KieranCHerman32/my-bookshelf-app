@@ -45,16 +45,16 @@ createShelves = function (books) {
 }
 
 // place books in shelf based on primary genre
-sortBooks = function (books, bookshelves) {
+sortBooks = function (books, shelves) {
     books.forEach(book => {
         // TODO: convert block to own function
         book.place = 'initial';
         const genre = book.genres[0];
-        const shelf = bookshelves.find(findByGenre(genre));
+        const shelf = shelves.find(findByGenre(genre));
         shelf.books.push(book);
     })
-    clearShelves(bookshelves);
-    shiftBooks(bookshelves);
+    clearShelves(shelves);
+    shiftBooks(shelves);
 };
 
 // remove empty bookshelves
@@ -72,11 +72,12 @@ shiftBooks = function (shelves) {
         if (shelf.length === 1) {
             const selectedBook = shelf.books[0];
             for (let i = 0; i < selectedBook.genres.length; i++) {
+                console.log(i);
                 // TODO: convert block to own function
                 selectedBook.place = 'temporary';
                 const genre = selectedBook.genres[i];
                 const shelf = bookshelves.find(findByGenre(genre));
-                shelf.books.push(book);
+                shelf.books.push(selectedBook);
             }
         }
     });
