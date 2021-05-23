@@ -1,14 +1,19 @@
 var bookshelves = [];
 var findByGenre = genre => s => s.genre === genre;
+var findByTitle = title => s => s.title === title;
 
 
 window.onload = function () {
+    main();
+};
+
+main = function () {
     listBooks(library);
     createShelves(library);
     sortBooks(library, bookshelves)
     clearShelves(bookshelves); // Final cleaning, do not remove
     console.log(this.bookshelves);
-};
+}
 
 // list all books in library
 listBooks = function (books) {
@@ -41,6 +46,7 @@ createShelves = function (books) {
         )
     })
 
+    console.log(shelves);
     bookshelves = shelves;
 }
 
@@ -59,28 +65,28 @@ sortBooks = function (books, shelves) {
 
 // remove empty bookshelves
 clearShelves = function (shelves) {
+    let indices = [];
     for (let shelf of shelves) {
+        console.log(shelf);
         if (shelf.books.length < 1) {
-            shelves.splice(shelves.indexOf(shelf), 1)
+            indices.splice(-1, 0, shelves.indexOf(shelf))
         }
+    }
+
+    while (indices.length) {
+        shelves.splice(indices.pop(), 1);
     }
 }
 
 // attempt to add book to shelf based on secondary genre if alone on shelf
 shiftBooks = function (shelves) {
-    shelves.forEach(shelf => {
-        if (shelf.length === 1) {
-            const selectedBook = shelf.books[0];
-            for (let i = 0; i < selectedBook.genres.length; i++) {
-                console.log(i);
-                // TODO: convert block to own function
-                selectedBook.place = 'temporary';
-                const genre = selectedBook.genres[i];
-                const shelf = bookshelves.find(findByGenre(genre));
-                shelf.books.push(selectedBook);
-            }
+    for (let shelf of shelves) {
+        if (shelf.books.length === 1 &&
+            shelf.books[0].genres > 1) {
+            shelf.books.shift()
         }
-    });
+    }
+    
 }
 
 class Book {
