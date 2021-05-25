@@ -1,18 +1,21 @@
-var bookshelves = [];
-var findByGenre = genre => s => s.genre === genre;
-var findByTitle = title => s => s.title === title;
+// TODO: Implement Goodreads API
 
+var bookshelves = [];
+var booksToModify = [];
+var findByGenre = genre => s => s.genre === genre;
+var findByGenreNested = genre => s => s.genres[0] === genre;
+var findByTitle = title => s => s.title === title;
+var findBook = book => s === book;
 
 window.onload = function () {
-    main();
+    main(library);
 };
 
-main = function () {
-    listBooks(library);
-    createShelves(library);
-    sortBooks(library, bookshelves)
+main = function (books) {
+    // listBooks(books);
+    createShelves(books);
+    sortBooks(books, bookshelves)
     clearShelves(bookshelves); // Final cleaning, do not remove
-    console.log(this.bookshelves);
 }
 
 // list all books in library
@@ -32,8 +35,6 @@ listGenres = function (books) {
             }
         })
     })
-
-    console.log(genres);
     return genres;
 }
 
@@ -45,29 +46,22 @@ createShelves = function (books) {
             new Shelf(genre, [])
         )
     })
-
-    console.log(shelves);
     bookshelves = shelves;
 }
 
 // place books in shelf based on primary genre
 sortBooks = function (books, shelves) {
     books.forEach(book => {
-        // TODO: convert block to own function
-        book.place = 'initial';
-        const genre = book.genres[0];
-        const shelf = shelves.find(findByGenre(genre));
-        shelf.books.push(book);
-    })
+        addBook(book, shelves);
+    });
     clearShelves(shelves);
-    shiftBooks(shelves);
+    // shiftBooks(shelves);
 };
 
 // remove empty bookshelves
 clearShelves = function (shelves) {
     let indices = [];
     for (let shelf of shelves) {
-        console.log(shelf);
         if (shelf.books.length < 1) {
             indices.splice(-1, 0, shelves.indexOf(shelf))
         }
@@ -79,14 +73,22 @@ clearShelves = function (shelves) {
 }
 
 // attempt to add book to shelf based on secondary genre if alone on shelf
-shiftBooks = function (shelves) {
-    for (let shelf of shelves) {
-        if (shelf.books.length === 1 &&
-            shelf.books[0].genres > 1) {
-            shelf.books.shift()
-        }
-    }
-    
+// shiftBooks = function (shelves) {
+//     for (const shelf of shelves) {
+//         if (shelf.books.length === 1 && shelf.books[0].genres.length > 1) {
+//             for (const book of shelf.books) {
+//                 // const genre = shelf.books[0].genres[0];
+//                 // const selectedBook = library.find(findByGenreNested(genre));
+//             }
+//         }
+//     }
+// }
+
+addBook = function (book, shelves) {
+    book.place = 'initial';
+    const genre = book.genres[0];
+    const shelf = shelves.find(findByGenre(genre));
+    shelf.books.push(book);
 }
 
 class Book {
@@ -105,7 +107,7 @@ class Shelf {
     }
 }
 
-const library = [
+var library = [
     book = new Book(
         'title',
         [
